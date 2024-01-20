@@ -1,0 +1,44 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Transactions History
+{% endblock title %}
+
+{% block main %}
+
+    <h1>All Transactions History</h1>
+
+    {% if full_transaction_history %}
+
+        <table>
+            <thead style="font-size: 25px;">
+                <th>ID</th>
+                <th>Type</th>
+                <th>Stock</th>
+                <th>Price</th>
+                <th>Shares</th>
+                <th>Date &amp; Time</th>
+            </thead>
+            <tbody style="font-size: 21px;">
+                {% for transactions in full_transaction_history %}
+
+                    <tr>
+                        <td>{{ transactions.id }}</td>
+                        <td>{{ transactions.type }}</td>
+                        <td>{{ transactions.stock_symbol }}</td>
+                        <td>{{ transactions.amount }}</td>
+                        <td>{{ transactions.share }}</td>
+                        <td>{{ transactions.datetime }}</td>
+                    </tr>
+
+                {% endfor %}
+            </tbody>
+        </table>
+    
+    {% else %}
+
+        <h2 style="margin-top: 40px; color: crimson;">No Transactions Yet!</h2>
+
+    {% endif %}
+
+{% endblock main %}

@@ -1,0 +1,20 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Log In
+{% endblock %}
+
+{% block main %}
+    <form action="/login" method="post">
+        <div class="mb-3">
+            <input autocomplete="off" autofocus class="form-control mx-auto w-auto" required id="username" name="username" placeholder="Username" type="text" {% if username %} value="{{ username }}" {% endif %}>
+        </div>
+        <div class="mb-3">
+            <input class="form-control mx-auto w-auto passwordInput" id="password" required name="password" placeholder="Password" type="password" {% if password %} value="{{ password }}" {% endif %}>
+        </div>
+
+        <button type="button" id="showPasswords">Show/Hide Password</button>
+
+        <button class="btn btn-primary" type="submit">Log In</button>
+    </form>
+{% endblock %}

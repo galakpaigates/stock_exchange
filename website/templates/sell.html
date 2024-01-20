@@ -1,0 +1,26 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Sell
+{% endblock title%}
+
+{% block main %}
+
+    <h2>Select Stock to Sell</h2>
+
+    <form method="POST" action="/sell">
+        <input name="shares" type="text" autocomplete="off" required autofocus placeholder="Shares" style="padding: 5px; font-size: 18px; outline: none;" {% if shares %} value="{{ shares }}" {% endif %}>
+
+        <select style="padding: 7px; font-size: 18px; margin: 30px 15px 0 15px;" required name="symbol">
+            <option disabled selected>Stock</option>
+
+            {% for stock in all_user_stocks %}
+                <option value="{{ stock.stock_symbol.lower() }}">{{ stock.stock_symbol.upper() }}</option>
+            {% endfor %}
+
+        </select>
+
+        <button style="padding: 8px 15px; background-color: cornflowerblue; color: white; border: none;" type="submit">Sell</button>
+    </form>
+
+{% endblock main %}

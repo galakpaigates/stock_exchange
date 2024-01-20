@@ -1,0 +1,32 @@
+{% extends "layout.html" %}
+
+{% block title %}Register{% endblock title %}
+
+{% block main %}
+
+    <form method="POST" action="/register">
+
+        {% if username %}
+            <input name="name" type="text" required autocomplete="off" autofocus placeholder="Name" value="{{ username }}">
+        {% else %}
+            <input name="name" type="text" required autocomplete="off" autofocus placeholder="Name">
+        {% endif %}
+
+        {% if password %}
+            <input class="passwordInput" required name="password" type="password" autocomplete="off" placeholder="Password" value="{{ password }}">
+        {% else %}
+            <input class="passwordInput" required name="password" type="password" autocomplete="off" placeholder="Password">
+        {% endif %}
+
+        {% if confirm_password %}
+            <input class="passwordInput" required name="confirm_password" type="password" autocomplete="off" placeholder="Confirm Password" value="{{ confirm_password }}">
+        {% else %}
+            <input class="passwordInput" required name="confirm_password" type="password" autocomplete="off" placeholder="Confirm Password">
+        {% endif %}
+
+        <button type="submit">Register</button>
+    </form>
+
+    <button style="margin-top: 12px;" id="showPasswords">Show/Hide Password</button>
+
+{% endblock main %}

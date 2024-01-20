@@ -1,0 +1,24 @@
+{% extends "layout.html" %}
+
+{% block title %}Quote{% endblock title %}
+
+{% block main %}
+
+    <!--
+        display lookup response if there are any
+    -->
+
+    {% if lookup_response %}
+
+        <h2>{{ lookup_response.name }} costs {{ lookup_response.price }}</h2>
+    
+    {% else %}
+
+        <form action="/quote" method="POST">
+            <input type="text" name="symbol" autocomplete="off" required placeholder="Symbol" {% if symbol %} value="{{ symbol }}" {% endif %} autofocus>
+            <button type="submit">Quote</button>
+        </form>
+
+    {% endif %}
+
+{% endblock main %}

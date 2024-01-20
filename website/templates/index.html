@@ -1,0 +1,55 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Home
+{% endblock title %}
+
+{% block main %}
+
+    <h2>{{ username | title }}'s Net Worth</h2>
+    <br>
+    <h4>Account Balance = {{ account_balance }}</h4>
+
+    {% if full_stock_information %}
+
+        <table>
+            <thead>
+                <th>No. #</th>
+                <th>Stock</th>
+                <th>Shares</th>
+                <th>Price</th>
+                <th>Holdings</th>
+            </thead>
+            <tbody>
+                {% for stock in full_stock_information %}
+
+                    <tr>
+                        <td>{{ loop.index }}</td>
+                        <td>{{ stock.stock_symbol }}</td>
+                        <td>{{ stock.share }}</td>
+                        <td>{{ stock.amount }}</td>
+                        <td>{{ (stock.share * stock.amount) | round(2) }}</td>
+                    </tr>
+
+                {% endfor %}
+
+                <tr style="font-weight: 700;">
+                    <td>Grand Total</td>
+                    <td>N/a</td>
+                    <td>{{ amount_and_share_sum[0].share_sum }}</td>
+                    <td>{{ amount_and_share_sum[0].stock_sum | round(2) }}</td>
+                    <td>{{ all_holding_sum | round(2) }}</td>
+                </tr>
+
+            </tbody>
+        </table>
+
+    {% else %}
+
+        <h2 style="color: crimson; margin-top: 40px;">
+            No Purchased Stock!
+        </h2>
+    
+    {% endif %}
+
+{% endblock main %}
