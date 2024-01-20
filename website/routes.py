@@ -114,7 +114,6 @@ def history():
 
 @all_routes.route("/login", methods=["GET", "POST"])
 def login():
-    print(len(session))
     if session.get("user_id") is None:
         flash("Login required to purchase and sell stocks and access more features of the site!")
         
