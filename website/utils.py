@@ -1,5 +1,5 @@
 from flask import current_app
-import os
+import os, imghdr
 
 # to store utility functions
 
@@ -47,5 +47,18 @@ def clear_tmp_profile_dir():
             # Check if it's a file, and remove it
             if os.path.isfile(item_path):
                 os.remove(item_path)
+
+
+def validate_image(file_path):
+    
+    try:
+        with open(file_path, "rb") as file:
+            image = imghdr.what(file)
+            if image:
+                return True
+            return False
+    
+    except Exception as e:
+        return False
 
 

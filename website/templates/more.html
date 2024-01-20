@@ -15,7 +15,7 @@
 
         <ol style="font-size: 23px; margin-top: 40px;">
             {% for option in more_options %}
-                <a href="{{ url_for('more') }}/{{ option | replace(' ', '-') }}"><li style="margin: 15px; list-style-type: none;">{{ option | title }}</li></a>
+                <a href="{{ url_for('all_routes.more') }}/{{ option | replace(' ', '-') }}"><li style="margin: 15px; list-style-type: none;">{{ option | title }}</li></a>
             {% endfor %}
         </ol>
 
@@ -25,7 +25,7 @@
 
             <h1>Change Password</h1>
             
-            <form method="POST" action="{{ url_for('more') }}">
+            <form method="POST" action="{{ url_for('all_routes.more') }}">
                 <input class="passwordInput" required type="password" name="old_password" autocomplete="off" autofocus placeholder="Old Password" {% if old_password %}value="{{ old_password }}"{% endif %}>
                 <input class="passwordInput" required type="password" name="new_password" autocomplete="off" placeholder="New Password" {% if new_password %}value="{{ new_password }}"{% endif %}>
                 <input class="passwordInput" required type="password" name="confirm_password" autocomplete="off" placeholder="Confirm Password" {% if confirm_password %}value="{{ confirm_password }}"{% endif %}>
@@ -39,7 +39,7 @@
 
             <h2>Add Cash</h2>
 
-            <form method="POST" action="{{ url_for('more') }}">
+            <form method="POST" action="{{ url_for('all_routes.more') }}">
                 <input type="number" required name="new_cash" required autocomplete="off" autofocus placeholder="Additional Cash" {% if new_cash %}value="{{ new_cash }}"{% endif %}>
                 <button type="submit">Add Cash</button>
             </form>

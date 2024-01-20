@@ -44,7 +44,7 @@
                                 {% if session['user_profile_info'] %}
                                     <img src="data:image/png;base64,{{ session['user_profile_info']['picture'] }}" alt="Profile" id="profile-img">
                                 {% else %}
-                                    <img src="/static/imgs/profile/no-profile-pic-icon.png" id="profile-img">
+                                    <img src="/static/imgs/no_profile_picture.jpeg" id="profile-img">
                                 {% endif %}
                             {% endblock profile_picture_block %}
 

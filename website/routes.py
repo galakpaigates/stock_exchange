@@ -1,5 +1,5 @@
-import os, base64
-from flask import flash, g, redirect, render_template, request, session, url_for
+import os
+from flask import flash, redirect, render_template, request, session, url_for, Blueprint
 from datetime import datetime
 from werkzeug.security import check_password_hash, generate_password_hash
 from werkzeug.datastructures import FileStorage
@@ -7,7 +7,8 @@ from werkzeug.utils import secure_filename
 
 from helpers import login_required, lookup
 
-from website import ALLOWED_EXTENSIONS, app, db, UPLOAD_FOLDER
+from website import db
+from website.utils import *
 
 
 MORE_OPTIONS = [
@@ -16,8 +17,10 @@ MORE_OPTIONS = [
     "profile-picture"
 ]
 
+all_routes = Blueprint("all_routes", __name__)
 
-@app.after_request
+
+@all_routes.after_request
 def after_request(response):
     """Ensure responses aren't cached"""
     response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
@@ -26,7 +29,7 @@ def after_request(response):
     return response
 
 
-@app.route("/buy", methods=["GET", "POST"])
+@all_routes.route("/buy", methods=["GET", "POST"])
 @login_required
 def buy():
     """Buy shares of stock"""
@@ -99,7 +102,7 @@ def buy():
     return render_template("buy.html")
 
 
-@app.route("/history", methods=["GET"])
+@all_routes.route("/history", methods=["GET"])
 @login_required
 def history():
     """Show history of transactions"""
@@ -109,8 +112,12 @@ def history():
     return render_template("history.html", full_transaction_history=full_transaction_history)
 
 
-@app.route("/login", methods=["GET", "POST"])
+@all_routes.route("/login", methods=["GET", "POST"])
 def login():
+    print(len(session))
+    if session.get("user_id") is None:
+        flash("Login required to purchase and sell stocks and access more features of the site!")
+        
     """Log user in"""
 
     # Forget any user_id
@@ -155,7 +162,7 @@ def login():
         return render_template("login.html")
 
 
-@app.route("/logout", methods=['GET'])
+@all_routes.route("/logout", methods=['GET'])
 def logout():
     """Log user out"""
 
@@ -166,7 +173,7 @@ def logout():
     return redirect(url_for("index"))
 
 
-@app.route("/quote", methods=["GET", "POST"])
+@all_routes.route("/quote", methods=["GET", "POST"])
 @login_required
 def quote():
     """Get stock quote."""
@@ -185,7 +192,7 @@ def quote():
     return render_template("quote.html")
 
 
-@app.route("/register", methods=["GET", "POST"])
+@all_routes.route("/register", methods=["GET", "POST"])
 def register():
     """Register user"""
     
@@ -217,12 +224,12 @@ def register():
         db.execute("INSERT INTO users (username, hash) VALUES (?, ?);", username, generate_password_hash(password=password, method='pbkdf2:sha512:600000'))
         
         flash(message="Account created!", category="success")
-        return redirect(url_for("login"))
+        return redirect(url_for("all_routes.login"))
     
     return render_template("register.html")
 
 
-@app.route("/sell", methods=["GET", "POST"])
+@all_routes.route("/sell", methods=["GET", "POST"])
 @login_required
 def sell():
     """Sell shares of stock"""
@@ -302,13 +309,14 @@ def sell():
             
         # success
         db.execute("COMMIT;")
-        flash(message="All went well! Share Successfully Sold!", category="success")
+        flash(message="Share Successfully Sold!", category="success")
         return redirect(url_for("index"))
             
     
     return render_template("sell.html", all_user_stocks=all_user_stocks)
 
-@app.route("/more", methods=['GET', 'POST'])
+
+@all_routes.route("/more", methods=['GET', 'POST'])
 @login_required
 def more():
     
@@ -380,14 +388,21 @@ def more():
         elif "profile-picture" in request.files:
             profile_picture = request.files.get("profile-picture")
 
-            if not isinstance(profile_picture, FileStorage) or profile_picture is None or profile_picture.filename is None or profile_picture.filename.split('.', 1)[1] not in ALLOWED_EXTENSIONS:
+            if not isinstance(profile_picture, FileStorage) or profile_picture is None or profile_picture.filename is None:
                 flash("Please provide a valid image!")
-                return redirect(url_for("more"))
+                return redirect(url_for("all_routes.more"))
+            
 
             filename = secure_filename(profile_picture.filename)
             filepath = os.path.join(os.path.dirname(__file__), 'static/imgs/profile', filename)
             
             profile_picture.save(filepath)
+
+            # do the final image validation
+            if not validate_image(filepath):
+                flash("Invalid file type, not an Image!")
+                clear_tmp_profile_dir()
+                return redirect(url_for("all_routes.more"))
 
             with open(filepath, 'rb') as uploaded_picture:
                 existing_profile_picture = db.execute("SELECT picture FROM profiles WHERE user_id = ?", current_user_id)
@@ -405,13 +420,13 @@ def more():
             flash("Profile picture uploaded successfully!")
             return redirect(url_for("index"))
             
-        return redirect(url_for("more"))
+        return redirect(url_for("all_routes.more"))
         
     options_as_words = [option.replace('-', ' ') for option in MORE_OPTIONS]
     return render_template("more.html", more_options=options_as_words)
 
 
-@app.route("/more/<dynamic_route>", methods=['POST', 'GET'])
+@all_routes.route("/more/<dynamic_route>", methods=['POST', 'GET'])
 @login_required
 def dynamically_display_more_options(dynamic_route):
     
